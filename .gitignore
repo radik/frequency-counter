@@ -1,0 +1,17 @@
+# IntelliJ IDEA
+.idea/*
+*.iml
+
+# Mac
+.DS_Store
+
+# Compiled
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Maven
+target/
