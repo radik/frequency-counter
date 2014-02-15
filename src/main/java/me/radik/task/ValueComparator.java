@@ -6,15 +6,15 @@ import java.util.Map;
 /**
  * Created by radik on 13/02/14.
  */
-public class ValueComparator implements Comparator<String> {
-    private Map<String, Integer> _map;
+public class ValueComparator<T> implements Comparator<T> {
+    private Map<T, Integer> _map;
 
-    public ValueComparator(Map<String, Integer> map) {
+    public ValueComparator(Map<T, Integer> map) {
         _map = map;
     }
 
     @Override
-    public int compare(String key1, String key2) {
+    public int compare(T key1, T key2) {
         return _map.get(key2).compareTo(_map.get(key1));
     }
 }
