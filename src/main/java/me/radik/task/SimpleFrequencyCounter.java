@@ -22,20 +22,20 @@ public class SimpleFrequencyCounter<T> implements FrequencyCounter<T> {
     public Collection<T> getMostFrequent(Iterator<T> iterator, int count) {
         Map<T, Integer> map = new HashMap<T, Integer>();
         while (iterator.hasNext()){
-            T word = iterator.next();
-            map.put(word, map.containsKey(word)? map.get(word) + 1: 1);
+            T item = iterator.next();
+            map.put(item, map.containsKey(item)? map.get(item) + 1: 1);
         }
 
         Map<T, Integer> sortedMap = new TreeMap<T, Integer>(new ValueComparator(map));
         sortedMap.putAll(map);
         List<T> result = new ArrayList<T>();
 
-        Iterator<T> wordsIterator = sortedMap.keySet().iterator();
+        Iterator<T> keysIterator = sortedMap.keySet().iterator();
 
         int i = 0;
 
-        while (wordsIterator.hasNext() && i < count){
-            result.add(wordsIterator.next());
+        while (keysIterator.hasNext() && i < count){
+            result.add(keysIterator.next());
             i++;
         }
 
