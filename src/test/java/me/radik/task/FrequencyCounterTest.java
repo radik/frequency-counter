@@ -1,5 +1,6 @@
 package me.radik.task;
 
+import com.sun.xml.internal.xsom.impl.scd.Iterators;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -8,9 +9,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
  * Created by radik on 14/02/14.
@@ -21,7 +21,8 @@ public class FrequencyCounterTest {
 
     @Test
     public void emptyIterator() {
-
+        FrequencyCounter counter = new SimpleFrequencyCounter();
+        assertEquals(0, counter.getMostFrequent(new Iterators.Array<String>(new String[]{})).size());
     }
 
     @Test
@@ -44,4 +45,5 @@ public class FrequencyCounterTest {
         assertThat(frequent3words, hasItems("ovechkin", "malkin", "kovalchuk"));
 
     }
+
 }

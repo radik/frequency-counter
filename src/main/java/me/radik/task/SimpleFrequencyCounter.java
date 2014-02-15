@@ -35,4 +35,5 @@ public class SimpleFrequencyCounter implements FrequencyCounter {
 
         return result;
     }
+
 }
