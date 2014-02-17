@@ -17,3 +17,6 @@ Main drawbacks:
 
 ### Stage 4. Parallelization
 [v0.4 tag](https://github.com/radik/frequency-counter/tree/v0.4) snapshot after implementation of a frequency counting algorith, which uses ForkJoinPull for parallelizing computing. This approach allows some scaling. Next step for this approach - real map-reduce or using actors model (akka.io library).
+
+### Stage 5. Profiling and improving
+[v0.4.1 tag](https://github.com/radik/frequency-counter/tree/v0.4.1) snapshot - improving StoredFrequencyCounter after profiling. After profiling StoredFrequencyCounter class, I found that prepared statements created for each 'read' method call. Moving them to class fields gave 30% speed improving.
