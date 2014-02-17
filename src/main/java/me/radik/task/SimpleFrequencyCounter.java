@@ -9,7 +9,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Created by radik on 11/02/14.
+ * This implementation of {@link me.radik.task.FrequencyCounter} counts frequency of elements from iterator.
+ * All work done in memory, if {@link java.lang.OutOfMemoryError} thrown during counting,
+ * consider increasing the heap size.
  */
 public class SimpleFrequencyCounter<T> implements FrequencyCounter<T> {
 

@@ -4,15 +4,15 @@ import java.util.Comparator;
 import java.util.Map;
 
 /**
- * Created by radik on 13/02/14.
  * Comparator for sorting {@link java.util.Map} by value.
+ * @param <T> the type of sorted {@link java.util.Map} key.
  */
 public class ValueComparator<T> implements Comparator<T> {
     private Map<T, Integer> _map;
     private boolean _descend;
 
     /**
-     * @param map Instance of {@link java.util.Map} which sorting by this comparator.
+     * @param map Instance of {@link java.util.Map} which sorted by this comparator.
      */
     public ValueComparator(Map<T, Integer> map) {
         this(map, true);
@@ -20,7 +20,7 @@ public class ValueComparator<T> implements Comparator<T> {
 
 
     /**
-     * @param map Instance of {@link java.util.Map} which sorting by this comparator.
+     * @param map Instance of {@link java.util.Map} which sorted by this comparator.
      * @param descend Order for sorting.
      */
     public ValueComparator(Map<T, Integer> map, boolean descend) {

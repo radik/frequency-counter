@@ -4,8 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * Created by radik on 11/02/14.
- * @param <T> Type of items in Iterator
+ * @param <T> the type of elements, the frequency of them counted by this counter.
  */
 public interface FrequencyCounter<T> {
 
