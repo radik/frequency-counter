@@ -13,17 +13,18 @@ import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-/**
- * Created by radik on 14/02/14.
- */
 @RunWith(JUnit4.class)
 public class FrequencyCounterTest {
 
+    protected FrequencyCounter<String> _counter;
+
+    public FrequencyCounterTest() {
+        _counter = new SimpleFrequencyCounter<String>();
+    }
 
     @Test
     public void emptyIterator() {
-        FrequencyCounter counter = new SimpleFrequencyCounter();
-        assertEquals(0, counter.getMostFrequent(new Iterators.Array<String>(new String[]{})).size());
+        assertEquals(0, _counter.getMostFrequent(new Iterators.Array<String>(new String[]{})).size());
     }
 
     @Test
@@ -35,13 +36,12 @@ public class FrequencyCounterTest {
                 "ovechkin", "malkin", "kovalchuk"};
 
         for (int i = 0; i < samples.length; i++) {
-            for (int count = 0; count < (i + 1) * 10; count++) {
+            for (int count = 0; count < (i + 1) * 1000; count++) {
                 words.add(samples[i]);
             }
         }
 
-        FrequencyCounter counter = new SimpleFrequencyCounter();
-        Collection<String> frequent3words = counter.getMostFrequent(words.iterator(),3);
+        Collection<String> frequent3words = _counter.getMostFrequent(words.iterator(), 3);
         assertEquals(3, frequent3words.size());
         assertThat(frequent3words, hasItems("ovechkin", "malkin", "kovalchuk"));
 
