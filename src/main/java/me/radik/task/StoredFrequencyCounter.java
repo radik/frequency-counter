@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- *  This implementation of {@link me.radik.task.FrequencyCounter} counts frequency of elements from iterator.
- *  External SQL-database used for storing counting results.
- *  Tested on sqlite3 and Postgres
+ * This implementation of {@link me.radik.task.FrequencyCounter} counts frequency of elements from iterator.
+ * External SQL-database used for storing counting results.
+ * Tested on sqlite3 and Postgres
  */
 public class StoredFrequencyCounter<T extends Serializable> implements FrequencyCounter<T> {
 
@@ -29,12 +29,17 @@ public class StoredFrequencyCounter<T extends Serializable> implements Frequency
     private final static String CREATE_TABLE_QUERY = "CREATE TABLE frequency (key TEXT UNIQUE, amount INTEGER)";
 
     private Connection _connection;
+    private PreparedStatement _countStatement, _updateCount, _insertStatement;
 
     /**
      * @param connection The database connection. The frequency counter uses this database to store counting results.
      */
-    public StoredFrequencyCounter(Connection connection) {
+    public StoredFrequencyCounter(Connection connection) throws SQLException {
         _connection = connection;
+        _countStatement = _connection.prepareStatement(COUNT_QUERY);
+        _updateCount = _connection.prepareStatement(UPDATE_QUERY);
+        _insertStatement = _connection.prepareStatement(INSERT_QUERY);
+        prepareDb();
     }
 
     @Override
@@ -45,10 +50,11 @@ public class StoredFrequencyCounter<T extends Serializable> implements Frequency
     @Override
     public Collection<T> getMostFrequent(Iterator<T> iterator, int count) {
         try {
-            prepareDb();
+            long startTime = System.currentTimeMillis();
             while (iterator.hasNext()) {
                 read(iterator.next());
             }
+            LOGGER.info(String.format("Reading data from iterator: %d ms", System.currentTimeMillis() - startTime));
             return getMostFrequent(count);
         } catch (SQLException ex) {
             LOGGER.severe(String.format("SQLException: %s;\n Error code: %s", ex.getMessage(), ex.getErrorCode()));
@@ -57,31 +63,31 @@ public class StoredFrequencyCounter<T extends Serializable> implements Frequency
     }
 
     private void prepareDb() throws SQLException {
+        long startTime = System.currentTimeMillis();
         Statement statement = _connection.createStatement();
         statement.addBatch(DROP_TABLE);
         statement.addBatch(CREATE_TABLE_QUERY);
         statement.executeBatch();
+        LOGGER.info(String.format("Database preparation: %d ms", System.currentTimeMillis() - startTime));
     }
 
     private void read(T t) throws SQLException {
-        PreparedStatement countStatement = _connection.prepareStatement(COUNT_QUERY);
-        countStatement.setString(1, serialize(t));
-        ResultSet countResultSet = countStatement.executeQuery();
+        _countStatement.setString(1, serialize(t));
+        ResultSet countResultSet = _countStatement.executeQuery();
 
         if (countResultSet.next()) {
-            PreparedStatement updateCount = _connection.prepareStatement(UPDATE_QUERY);
             int amount = countResultSet.getInt("amount");
-            updateCount.setString(2, serialize(t));
-            updateCount.setInt(1, amount + 1);
-            updateCount.execute();
+            _updateCount.setString(2, serialize(t));
+            _updateCount.setInt(1, amount + 1);
+            _updateCount.execute();
         } else {
-            PreparedStatement insertStatement = _connection.prepareStatement(INSERT_QUERY);
-            insertStatement.setString(1, serialize(t));
-            insertStatement.execute();
+            _insertStatement.setString(1, serialize(t));
+            _insertStatement.execute();
         }
     }
 
     private Collection<T> getMostFrequent(int count) throws SQLException {
+        long startTime = System.currentTimeMillis();
         List<T> result = new ArrayList<T>();
         PreparedStatement mostFrequent = _connection.prepareStatement(MOST_FREQUENT_QUERY);
         mostFrequent.setInt(1, count);
@@ -90,11 +96,13 @@ public class StoredFrequencyCounter<T extends Serializable> implements Frequency
             T key = deserialize(rs.getString("key"));
             result.add(key);
         }
+        LOGGER.info(String.format("Getting most frequent: %d ms", System.currentTimeMillis() - startTime));
         return result;
     }
 
     /**
      * Serializes an object to string for storing in database in TEXT type column.
+     *
      * @param object The object to serialize.
      * @return Serialization result of passed object.
      */
@@ -104,6 +112,7 @@ public class StoredFrequencyCounter<T extends Serializable> implements Frequency
 
     /**
      * Deserializes string extracted from database to T object.
+     *
      * @param string The string to deserialize to T object.
      * @return A deserialized T object.
      */
